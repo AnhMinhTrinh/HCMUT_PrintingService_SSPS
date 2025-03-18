@@ -1,0 +1,315 @@
+@model Printing_Service.Models.Document
+@{
+    ViewData["Title"] = "UploadConfig";
+    Layout = "~/Views/Shared/_Upload.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <form class="form" asp-action="UploadConfig" asp-controller="Student" method="post">
+    <div class="d-flex justify-content-center align-items-center imagebehind">
+        <div class="upload-box p-4">
+            <div class="print-preview" style="width: 800px;">
+                <iframe src="~/Image/sample.pdf"
+                        frameborder="0"
+                        width="130%"
+                        height="100%"
+                        style="border-radius: 8px;">
+                </iframe>
+            </div>
+            <div class="print-config" style="width: 650px;">
+                <br />
+                <br />
+                <p style="text-align:center; font-size: 24px; font-weight: bold;"><strong>Thiết lập cấu hình in</strong></p>
+                <br />
+                <label class="fw-bold" style="width: 150px; margin-left: 75px;" for="pages">Chọn trang cần in</label>
+                <input class="text-center" type="text" name="pages" id="pages" placeholder="e.g. 1-5, 8, 11-13"/>
+                <br/>
+                <label class="fw-bold" style="width: 150px; margin-left: 75px;" for="Side">Số mặt in/1 tờ</label>
+                <select asp-for="Side" id="Side" onchange="updateLabel3()">
+                    <option value="" disabled selected>Chọn mặt</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+                <br/>
+                <label class="fw-bold" style="width: 150px; margin-left: 75px;" for="A3page">Khổ giấy</label>
+                <select asp-for="A3page" id="A3page" onchange="updateLabel2()">
+                    <option value="" disabled selected>Chọn khổ</option>
+                    <option value="A3">A3</option>
+                    <option value="A4">A4</option>
+                </select>
+                <br />
+                <label class="fw-bold" style="width: 150px; margin-left: 75px;" for="Ratio">Tỷ lệ</label>
+                <select asp-for="Ratio" id="Ratio" onchange="updateLabel1()">
+                    <option value="" disabled selected>Tỷ lệ</option>
+                    <option value="Vua trang giay">Vừa trang giấy</option>
+                    <option value="Toan bo">Toàn bộ</option>
+                </select>
+                <br />
+                <label class="fw-bold" style="width: 150px; margin-left: 75px;" for="Orient">Hướng in</label>
+                <select asp-for="Orient" id="Orient" onchange="updateLabel()">
+                    <option value="" disabled selected>Chọn hướng</option>
+                    <option value="Ngang">Ngang</option>
+                    <option value="Dọc">Dọc</option>
+                </select>
+                <div class="config">
+                    <button class="next btn btn-danger"  onclick="location.href='@Url.Action("UploadConfirm", "Student")'">Trở về</button>
+                    <button type="button" class="next btn btn-success"  id="start">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay">
+        <div class="print-info p-4">
+            <div class="print-confirm">
+                <h2 style="text-decoration: underline;text-decoration-color:gray;text-underline-offset: 20px;text-align:center;">Thông báo trạng thái</h2>
+                <br />
+                <br />
+                <label class="fw-bold" style="width: 200px;margin-bottom:25px;">Tài liệu</label>
+                <label style="width: 200px;text-align:center;margin-bottom:25px;" class="info">sample.pdf</label>
+                <br />
+                <label class="fw-bold" style="width: 200px;margin-bottom:25px;">Số trang cần để in</label>
+                <label style="width: 200px;text-align:center;margin-bottom:25px;" class="info">80</label>
+                <br />
+                <label class="fw-bold" style="width: 200px;margin-bottom:25px;">Số mặt in</label>
+                <label id="selectedValue3" style="width: 200px; text-align: center; margin-bottom: 25px;" class="info">Chưa chọn</label>
+                <br />
+                <label class="fw-bold" style="width: 200px;margin-bottom:25px;">Khổ giấy</label>
+                <label id="selectedValue2" style="width: 200px; text-align: center; margin-bottom: 25px;" class="info">Chưa chọn</label>
+                <br />
+                <label class="fw-bold" style="width: 200px;margin-bottom:25px;">Tỷ lệ</label>
+                <label id="selectedValue1" style="width: 200px; text-align: center; margin-bottom: 25px;" class="info">Chưa chọn</label>
+                <br />
+                <label class="fw-bold" style="width: 200px; margin-bottom: 25px;">Hướng in</label>
+                <label id="selectedValue" style="width: 200px; text-align: center; margin-bottom: 25px;" class="info">Chưa chọn</label>
+                <div class="config mt-3">
+                    <button class="btn btn-danger" style="margin-right: 20%;" id="back">Trở về</button>
+                    <button type="submit" class="next btn btn-success" id="print">In</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@* <script> *@
+@*     document.getElementById('print').addEventListener('click', function(event) { *@
+@*         event.preventDefault();  // Prevent the form from submitting immediately *@
+
+@*         Swal.fire({ *@
+@*             title: 'Thành công!', *@
+@*             text: 'Đã lưu thành công', *@
+@*             icon: 'success', *@
+@*             confirmButtonText: 'OK' *@
+@*         }).then((result) => { *@
+@*             if (result.isConfirmed) { *@
+@*                 // Submit the form to add data to the backend after the success message *@
+@*                 document.querySelector('.form').submit(); *@
+@*                 // Redirect to the next page (replace the URL with your target page) *@
+@*                 window.location.href = '@Url.Action("MainPage", "Student")'; *@
+@*             } *@
+@*         }); *@
+@*     }); *@
+
+@*     document.getElementById('start').addEventListener('click', function () { *@
+@*         document.querySelector('.overlay').style.display = 'flex'; *@
+@*     }); *@
+
+@* </script> *@
+<script>
+    function updateLabel() {
+        const direction = document.getElementById('Orient');
+        const selectedValue = direction.value; // Get the selected value
+
+        document.getElementById('selectedValue').textContent = selectedValue || 'Chưa chọn';
+    }
+</script>
+<script>
+    function updateLabel1() {
+        const direction = document.getElementById('Ratio');
+        const selectedValue = direction.value; // Get the selected value
+
+        document.getElementById('selectedValue1').textContent = selectedValue || 'Chưa chọn';
+    }
+</script>
+<script>
+    function updateLabel2() {
+        const direction = document.getElementById('A3page');
+        const selectedValue = direction.value; // Get the selected value
+
+        document.getElementById('selectedValue2').textContent = selectedValue || 'Chưa chọn';
+    }
+</script>
+<script>
+    function updateLabel3() {
+        const direction = document.getElementById('Side');
+        const selectedValue = direction.value; // Get the selected value
+
+        document.getElementById('selectedValue3').textContent = selectedValue || 'Chưa chọn';
+    }
+</script>
+@* <script> *@
+@*     // JavaScript to show the overlay before form submission *@
+@*     document.getElementById('start').addEventListener('click', function (event) { *@
+@*         event.preventDefault();  // Prevent the form from submitting immediately *@
+@*         document.querySelector('.overlay').style.display = 'flex';  // Show the overlay *@
+
+@*         // After a short delay (for overlay visibility), submit the form *@
+@*         setTimeout(function () { *@
+@*             document.querySelector('form').submit();  // Submit the form manually *@
+@*         }, 1500);  // Adjust the delay time as needed *@
+@*     }); *@
+</script>
+<style>
+    .imagebehind {
+        background-image: url('/image/slbktv.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 90vh;
+        width: 100%;
+    }
+
+    .upload-box {
+        display: flex;
+        flex-direction: row;
+        gap: 25px;
+        max-width: 1100px;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        border: 1px solid #ccc;
+        background-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .print-preview {
+        margin: auto;
+        width: 600px;
+        height: 650px;
+        background-color:white;
+        display: flex;
+        border-radius: 8px;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid black;
+    }
+
+    .preview {
+        width: 550px;
+        height: 600px;
+        background-color: rgb(30, 30, 30);
+        padding: 20px;
+        text-align: center;
+    }
+
+    .print-config {
+        margin: auto;
+        width: 600px;
+        height: 650px;
+        background-color: white;
+
+        border-radius: 8px;
+        border: 1px solid black;
+    }
+
+    .delete {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background: none;
+        border: none;
+        font-size: 1.2em;
+        cursor: pointer;
+    }
+
+    .config {
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .next {
+        width: 100px;
+        height: 35px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+
+    .print-progress {
+        max-width: 500px;
+        background-color: lightgoldenrodyellow;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    input, select {
+        width: 200px;
+        height: 35px;
+        border: none;
+        background-color: lightgray;
+        border-radius: 5px;
+        margin-bottom: 45px;
+        color: black;
+    }
+
+    .overlay, .overlay2 {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .print-info {
+        display: flex;
+        width: 1000px;
+        background-color: rgb(255, 255, 255);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Bóng mờ */
+        margin-top: 30px;
+        margin-bottom: 30px;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+
+
+<script>
+    document.getElementById('start').addEventListener('click', function () {
+        document.querySelector('.overlay').style.display = 'flex';
+    });
+
+    document.getElementById('back').addEventListener('click', function () {
+        document.querySelector('.overlay').style.display = 'none';
+    }); 
+
+    document.getElementById('print').addEventListener('click', function () {
+        document.querySelector('.overlay2').style.display = 'flex';
+    });
+</script>
+
+
+@if (TempData["PrintSuccess"] != null)
+{
+    <script>
+        Swal.fire({
+            title: 'Thành công!',
+            text: 'In Thanh Cong',
+            icon: 'success',
+            confirmButtonText: 'OK'
+
+        });
+    </script>
+}

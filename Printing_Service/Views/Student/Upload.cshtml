@@ -1,0 +1,328 @@
+@{
+    ViewData["Title"] = "Upload";
+    Layout = "~/Views/Shared/_Upload.cshtml";
+}
+
+<div class="d-flex justify-content-center align-items-center imagebehind">
+    <div class="upload-box p-4">
+        <div class="upload-main">
+            <div class="adding-files">
+                <p style="font-size: 1.2em;">Tải tài liệu</p>
+                <p style="color:gray;text-decoration: underline;text-decoration-color: gray;text-underline-offset: 20px;">Chọn và tải lên tài liệu bạn muốn in</p>
+                <br />
+                <div class="file-upload" id="drop-zone">
+                    <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                    <p>Chọn thư mục hoặc kéo thả vào đây</p>
+                    <p style="color: gray;">Định dạng: .docx, .pdf, lên tới 50MB</p>
+                    <input type="File" id="file" multiple>
+                </div>
+            </div>
+            <div class="preview" style="display: none;">
+                <!-- File preview dynamically populated via JavaScript -->
+            </div>
+        </div>
+        <div class="upload-progress mt-1">
+            <div class="list-of-files">
+                <ul class="file-list"></ul>
+            </div>
+            <div class="config">
+                <button class="btn btn-danger mb-5" style="margin-right: 50px;">Trở về</button>
+                <button class="btn btn-success mb-5" onclick="location.href='@Url.Action("UploadConfirm", "Student")'">Tiếp theo</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+
+    .account-box {
+        width: 90%;
+        max-width: 1200px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 40px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        border: 1px solid black;
+        border-radius: 15px;
+    }
+
+    .imagebehind {
+        background-image: url('/image/slbktv.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 85vh;
+        width: 100%;
+    }
+
+    .upload-box {
+        display: flex;
+        flex-direction: row;
+        gap: 25px;
+        max-width: 1000px;
+        height: 600px;
+        /*    background-color: rgba(255, 255, 255, 0.8); */
+        padding: 20px;
+        border-radius: 8px;
+        /* box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); Shadow */
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .upload-main {
+        width: 475px;
+        height: 450px;
+        text-align: center;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid black;
+    }
+
+    #drop-zone {
+        transition: background-color 0.3s ease;
+    }
+
+        #drop-zone.dragover {
+            background-color: rgba(135, 206, 250, 0.3); /* Highlight on drag */
+            border-color: deepskyblue;
+        }
+
+    .preview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .preview-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: lightblue;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+
+    .preview-icon {
+        margin-bottom: 15px;
+    }
+
+    .preview-details {
+        font-size: 1em;
+        text-align: center;
+        width: 100%;
+    }
+
+        .preview-details p:first-child {
+            font-weight: bold;
+        }
+
+        .preview-details p:last-child {
+            color: gray;
+        }
+
+    .upload-progress {
+        margin: auto;
+        width: 475px;
+        height: 450px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid black;
+    }
+
+    .list-of-files {
+        overflow: auto;
+        width: 450px;
+        height: 375px;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 0 0 0px;
+        width: 95%;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .file-extension {
+        margin: auto;
+        width: 10%;
+    }
+
+    .file-details {
+        width: 90%;
+        text-align: left;
+    }
+
+    .file-upload {
+        margin: auto;
+        width: 95%;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px dashed gray;
+    }
+
+    .delete {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background: none;
+        border: none;
+        font-size: 1.2em;
+        cursor: pointer;
+    }
+
+    .config {
+        height: 50px;
+        margin: auto;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .next {
+        width: 100px;
+        height: 35px;
+        background-color: deepskyblue;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+
+</style>
+
+<script>
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file");
+    const fileList = document.querySelector(".file-list");
+    const addingFiles = document.querySelector(".adding-files");
+    const previewArea = document.querySelector(".preview");
+    const configSection = document.querySelector(".config");
+    const allowedTypes = [
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/pdf",
+    ];
+    const maxSize = 50 * 1024 * 1024; // 50 MB
+
+    // Helper function to create a file item in the list
+    function createFileItem(file) {
+        let status = "";
+        if (!allowedTypes.includes(file.type)) {
+            status = "Lỗi định dạng";
+        } else if (file.size > maxSize) {
+            status = "Lỗi kích thước";
+        } else {
+            status = "Hoàn tất";
+        }
+
+        const fileItem = document.createElement("li");
+        fileItem.classList.add("file-item");
+        fileItem.innerHTML = `
+            <div class="file-extension">
+                <i class="fa fa-file-pdf-o"></i>
+            </div>
+            <div class="file-details">
+                <b>${file.name}</b>
+                <br />
+                <span style="color:gray;">${(file.size / 1024).toFixed(2)} kB</span>
+                <span>•</span>
+                <i class="fa fa-check-circle-o"></i>
+                <span>${status}</span>
+            </div>
+            <button class="delete"><i class="fa-regular fa-circle-xmark"></i></button>
+        `;
+        fileList.appendChild(fileItem);
+
+        // Bind events to the new file item
+        bindFileItemEvents(fileItem);
+    }
+
+    // Bind click events for preview and delete
+    function bindFileItemEvents(fileItem) {
+        fileItem.addEventListener("click", function () {
+            addingFiles.style.display = "none";
+            previewArea.style.display = "flex";
+            previewArea.innerHTML = `
+                <div class="preview-card">
+                    <div class="preview-icon">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </div>
+                    <div class="preview-details">
+                        <p><b>${this.querySelector(".file-details b").innerText}</b></p>
+                        <p>${this.querySelector(".file-details span").innerText}</p>
+                    </div>
+                </div>
+            `;
+            configSection.style.display = "flex";
+        });
+
+        fileItem.querySelector(".delete").addEventListener("click", function (event) {
+            event.stopPropagation();
+            fileItem.remove();
+
+            addingFiles.style.display = "block";
+            previewArea.style.display = "none";
+            configSection.style.display = "none";
+        });
+    }
+
+
+
+    // Handle files added from input or drag-and-drop
+    function handleFiles(files) {
+        Array.from(files).forEach((file) => createFileItem(file));
+    }
+
+    // Drag-and-drop events
+    dropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dropZone.classList.add("dragover");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+    });
+
+    dropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        dropZone.classList.remove("dragover");
+
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    // File input change event
+    fileInput.addEventListener("change", () => {
+        handleFiles(fileInput.files);
+    });
+
+    // Toggle back to file adding section
+    document
+        .querySelector(".config .next:first-child")
+        .addEventListener("click", function () {
+            addingFiles.style.display = "block";
+            previewArea.style.display = "none";
+            configSection.style.display = "none";
+        });
+
+</script>
